@@ -8,7 +8,7 @@ message = ({text,uri}) => {
         <Text>
             {text}
         </Text>
-        <Avatar src='{uri}'></Avatar>
+        <Avatar src={uri}></Avatar>
     </HStack>
   )
 }
