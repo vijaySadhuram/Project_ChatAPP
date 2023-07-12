@@ -68,7 +68,7 @@ const unsubsribe  = onAuthStateChanged(auth,(data)=>{
       unsubsribe();
       unsubscribebeformessage();
     }
-  });
+  },[]);
 
   
   return (
