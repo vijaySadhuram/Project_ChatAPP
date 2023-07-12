@@ -10,21 +10,22 @@ const auth = getAuth(app);
 const database=getFirestore(app);
 
 
-// console.log(auth);
 
 
 
+// login Handler function
 const loginHandler = () => {
   const provider = new GoogleAuthProvider();
   signInWithPopup(auth, provider);
 }
+// logout hander function
 const logoutHandler=()=>{
   signOut(auth);
 }
 function App() {
 
   // sort the messages
-  const quer=query(collection(database,"Messagess"),orderBy("createdAt","asc"))
+
 
   const [user, setUser] = useState(false);
   const [message,setmessage]=useState("");
@@ -53,8 +54,9 @@ function App() {
   }
 
   useEffect(() => {
+    const quer=query(collection(database,"Messagess"),orderBy("createdAt","asc"))
 const unsubsribe  = onAuthStateChanged(auth,(data)=>{
-      // console.log(data);
+      
       setUser(data);  
     });
     const unsubscribebeformessage= onSnapshot(quer,(snap)=>{
@@ -83,7 +85,9 @@ const unsubsribe  = onAuthStateChanged(auth,(data)=>{
               <Button onClick={logoutHandler} colorScheme="red" w={"full"}>Logout</Button>
               {/* Message holder */}
 
-              <VStack h={"full"} w={"full"} overflowY={"auto"}  >
+              <VStack h={"full"} w={"full"} overflowY={"auto"}   css={{"&::-webkit-scrollbar":{
+                display:"none",
+              }}} >
                 {
                 messages.map(item=>(
 
