@@ -3,8 +3,8 @@ import { Button, Box, Container, VStack, Input, HStack } from "@chakra-ui/react"
 import Message from "./Component/Message"
 import {onAuthStateChanged, getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth"
 import { app } from "./Firebase"
-import { useState ,useEffect} from "react"
-import {getFirestore,addDoc, collection, serverTimestamp,onSnapshot} from "firebase/firestore"
+import { useState ,useEffect,useRef} from "react"
+import {getFirestore,addDoc, collection, serverTimestamp,onSnapshot,query,orderBy} from "firebase/firestore"
 
 const auth = getAuth(app);
 const database=getFirestore(app);
@@ -23,9 +23,13 @@ const logoutHandler=()=>{
 }
 function App() {
 
+  // sort the messages
+  const quer=query(collection(database,"Messagess"),orderBy("createdAt","asc"))
+
   const [user, setUser] = useState(false);
   const [message,setmessage]=useState("");
   const [messages,setMessages]=useState([]);
+  const divForScrollBar=useRef(null);
 
 
   const submitHandler=async (e)=>{
@@ -38,6 +42,8 @@ function App() {
       createdAt:serverTimestamp()
     });
     setmessage("");
+    divForScrollBar.current.scrollIntoView({behavior:"smooth"});
+
    } catch (error) {
 
     alert(error)
@@ -51,7 +57,7 @@ const unsubsribe  = onAuthStateChanged(auth,(data)=>{
       // console.log(data);
       setUser(data);  
     });
-    const unsubscribebeformessage= onSnapshot(collection(database,"Messagess"),(snap)=>{
+    const unsubscribebeformessage= onSnapshot(quer,(snap)=>{
      setMessages(snap.docs.map((item)=>{
       const id=item.id;
       return {id,...item.data()};
@@ -86,8 +92,11 @@ const unsubsribe  = onAuthStateChanged(auth,(data)=>{
               text={item.text} uri={item.uri} user={item.uid===user.uid?"me" : "other"} />
               ))
                 }
+
+<div ref={divForScrollBar}></div>
               </VStack>
               {/* form */}
+             
 
               <form style={{ width: "100%" }}   onSubmit={submitHandler}>
                 <HStack>
